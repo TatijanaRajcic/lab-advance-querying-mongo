@@ -1,83 +1,130 @@
 ![Ironhack Logo](https://i.imgur.com/1QgrNNw.png)
 
+<!-- AS THE MONGO COMPASS QUERIES ARE A SIMPLIFIED VERSION OF A MONGO QUERY, I SIMPLY WROTE THE MONGO ONE -->
+
 # Answers
 
 ### 1. All the companies that it's name match 'Babelgum'. Retrieve only their `name` field.
 
-<!-- Your Code Goes Here -->
+1) mongo compass query: 
+filter: {name: {$eq:"Babelgum"}}
+project: {name:1}
+
+2) mongo query: 
+db.companies.find({name: {$eq:"Babelgum"}}, {name:1})
 
 ### 2. All the companies that have more than 5000 employees. Limit the search to 20 companies and sort them by **number of employees**.
 
-<!-- Your Code Goes Here -->
+1) mongo compass query: 
+filter: {number_of_employees : {$gt:5000}}
+sort: {number_of_employees: 1}
+limit: 20
+
+2) mongo query: 
+db.companies.find({number_of_employees : {$gt:5000}}).limit(20).sort({number_of_employees: 1})
 
 ### 3. All the companies founded between 2000 and 2005, both years included. Retrieve only the `name` and `founded_year` fileds.
 
-<!-- Your Code Goes Here -->
+1) mongo compass query: 
+filter: {$and: [{founded_year: {$lte: 2005}}, {founded_year: {$gte:2000}}]}
+project: {name:1 , founded_year:1}
+
+2) mongo query: 
+db.companies.find({$and: [{founded_year: {$lte: 2005}}, {founded_year: {$gte:2000}}]}, {name:1 , founded_year:1})
+OR: db.companies.find({founded_year: {$lte: 2005, $gte:2000}},{name:1 , founded_year:1})
+<!-- here, we are mixing filter and project so we separate both, in different curly brackets -->
 
 ### 4. All the companies that had a Valuation Amount of more than 100.000.000 and have been founded before 2010. Retrieve only the `name` and `ipo` fields.
 
-<!-- Your Code Goes Here -->
+1) mongo compass query: 
+filter: {founded_year: {$lt:2010}, "ipo.valuation_amount": {$exists: true, $gt: 100000000}} 
+
+2) mongo query: 
+db.companies.find({founded_year: {$lt:2010}, "ipo.valuation_amount": {$exists: true, $gt: 100000000}})
+<!-- here, we only use filter (even though for different fields), so we can put them in one big curly bracket -->
 
 ### 5. All the companies that have less than 1000 employees and have been founded before 2005. Order them by the number of employees and limit the search to 10 companies.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({number_of_employees:{$lt:1000}, founded_year:{$lt:2005}}).sort({number_of_employees:1}).limit(10)
 
 ### 6. All the companies that don't include the `partners` field.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({partners: {$exists:false}}) <!-- don't include the field partners-->
+db.companies.find({partners: {$size: 0}}) <!-- the field partners (array) is empty -->
 
 ### 7. All the companies that have a null type of value on the `category_code` field.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({category_code: null})
 
 ### 8. All the companies that have at least 100 employees but less than 1000. Retrieve only the `name` and `number of employees` fields.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({number_of_employees: {$gt:100,$lt:1000}}, {name:1, number_of_employees:1})
 
 ### 9. Order all the companies by their IPO price descendently.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({"ipo.valuation_amount": {$exists: true}}).sort({"ipo_valuation_amount":-1})
 
 ### 10. Retrieve the 10 companies with more employees, order by the `number of employees`
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find().sort({number_of_employees:-1}).limit(10)
 
 ### 11. All the companies founded on the second semester of the year. Limit your search to 1000 companies.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({founded_month: {$gte:7}}).limit(1000)
 
 ### 12. All the companies that have been 'deadpooled' after the third year.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+<!-- NOT FINISHED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+db.companies.find({ $expr: { $gt: [ deadpooled_year, founded_year ] } })
 
 ### 13. All the companies founded before 2000 that have and acquisition amount of more than 10.000.000
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({founded_year:{$lt:2000}, "acquisition.price_amount": {$gt: 10000000}})
 
 ### 14. All the companies that have been acquired after 2015, order by the acquisition amount, and retrieve only their `name` and `acquisiton` field.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({"acquisition.acquired_year": {$gt:2015}}, {name:1, acquisition:1}).sort({"acquisition.price_amount":1})
 
 ### 15. Order the companies by their `founded year`, retrieving only their `name` and `founded year`.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({founded_year: {$ne: null}}, {name:1,founded_year:1}).sort({founded_year:1})
+
 
 ### 16. All the companies that have been founded on the first seven days of the month, including the seventh. Sort them by their `aquisition price` descendently. Limit the search to 10 documents.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({founded_day: {$lt:8}, "acquisition.price_amount": {$ne :null}}).sort({"acquisition.price_amount":-1}).limit(10)
 
 ### 17. All the companies on the 'web' `category` that have more than 4000 employees. Sort them by the amount of employees in ascendant order.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({category_code: {$eq:"web"}, number_of_employees: {$gt:4000}}).sort({number_of_employees:1})
+
 
 ### 18. All the companies which their acquisition amount is more than 10.000.000, and currency are 'EUR'.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({"acquisition.price_amount": {$gt:10000000}, "acquisition.price_currency_code":{$eq: "EUR"}})
+
 
 ### 19. All the companies that have been acquired on the first trimester of the year. Limit the search to 10 companies, and retrieve only their `name` and `acquisition` fields.
 
-<!-- Your Code Goes Here -->
+2) mongo query:
+db.companies.find({"acquisition.acquired_month": {$lt:5}}, {name:1,acquisition:1}).limit(10)
 
 ### 20. All the companies that have been founded between 2000 and 2010, but have not been acquired before 2011.
 
-<!-- Your Code Goes Here -->
+2) mongo query: 
+db.companies.find({founded_year:{$lte:2000,$gte:2000}, "acquisition.acquired_year":{$gt:2011}})
+
